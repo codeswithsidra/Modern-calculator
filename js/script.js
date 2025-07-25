@@ -9,12 +9,21 @@ buttons.forEach(button => {
     const value = e.target.innerText;
 
     if (value === "=") {
-      try {
-        expression = eval(expression);
-      } catch {
-        expression = "Error";
+      const lastChar = expression.slice(-1);
+
+      // Prevent evaluation if last character is an operator
+      if (operators.includes(lastChar)) {
+        input.value = expression;
+        return;
       }
-      input.value = expression;
+
+      try {
+        expression = eval(expression).toString();
+        input.value = expression;
+      } catch {
+        input.value = expression;
+        expression = "";
+      }
     } else if (value === "DEL") {
       expression = expression.slice(0, -1);
       input.value = expression;
@@ -24,9 +33,9 @@ buttons.forEach(button => {
     } else {
       const lastChar = expression.slice(-1);
 
-      // Prevent multiple consecutive operators
+      // Prevent multiple operators
       if (operators.includes(value) && operators.includes(lastChar)) {
-        return; // do nothing
+        return;
       }
 
       expression += value;
